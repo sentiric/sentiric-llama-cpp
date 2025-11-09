@@ -35,11 +35,9 @@ RUN mkdir -p /tmp/llama.cpp/build \
         -DBUILD_SHARED_LIBS=ON \
     && cmake --build . --config ${CMAKE_BUILD_TYPE} -j$(nproc)
 
-# Install to system path
+# Install to system path (headers are automatically installed by cmake --install)
 RUN cd /tmp/llama.cpp/build \
-    && cmake --install . \
-    && mkdir -p /usr/local/include/llama \
-    && cp ../*.h /usr/local/include/llama/
+    && cmake --install .
 
 # Create symbolic links for easy access
 RUN ln -sf /usr/local/bin/server /usr/local/bin/llama-server \
