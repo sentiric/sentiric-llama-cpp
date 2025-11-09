@@ -1,22 +1,37 @@
 # Sentiric Llama.cpp Base Image
 
-Docker base image with pre-built llama.cpp including GPU support for GGUF models.
+Docker base image with pre-built llama.cpp as shared library for C++ projects.
+
+[![Build and Push Llama.cpp Docker Image](https://github.com/sentiric/sentiric-llama-cpp/actions/workflows/build.yml/badge.svg)](https://github.com/sentiric/sentiric-llama-cpp/actions/workflows/build.yml)
 
 ## Features
 
-- ✅ CPU acceleration
-- ✅ NVIDIA CUDA support
-- ✅ OpenCL support  
-- ✅ GGUF model format
-- ✅ Built-in HTTP server
-- ✅ Quantized model support (q4, q8, etc.)
+- Built on stable sentiric-vcpkg-base
+- Llama.cpp as shared library (`libllama.so`)
+- System-wide installation (headers and libraries)
+- OpenCL support enabled
+- Optimized for external linking
 
 ## Usage
 
-```bash
-# Pull the image
-docker pull ghcr.io/sentiric/sentiric-llama-cpp:latest
-
-# Use as base image
+```dockerfile
 FROM ghcr.io/sentiric/sentiric-llama-cpp:latest
+
+# Your C++ project can now link against llama.cpp
+# CMakeLists.txt:
+# find_package(llama REQUIRED)
+# target_link_libraries(your_target PRIVATE llama)
 ```
+
+## Development
+
+The image provides:
+
+- Headers: /usr/local/include/llama.h
+- Library: /usr/local/lib/libllama.so
+- CMake config: /usr/local/lib/cmake/llama/
+
+## Tags
+
+- latest - Stable CPU version with OpenCL
+- {commit-hash} - Specific llama.cpp versions

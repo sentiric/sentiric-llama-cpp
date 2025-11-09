@@ -1,4 +1,4 @@
-# Dockerfile
+# sentiric-llama-cpp/Dockerfile
 FROM ghcr.io/sentiric/sentiric-vcpkg-base:latest
 
 # Build arguments
@@ -22,34 +22,31 @@ RUN git clone https://github.com/ggerganov/llama.cpp.git \
     && cd llama.cpp \
     && git checkout ${LLAMA_CPP_VERSION}
 
-# Create build directory and build (CPU + OpenCL only - no CUDA in GitHub Actions)
+# Build as shared library for external linking
 RUN mkdir -p /tmp/llama.cpp/build \
     && cd /tmp/llama.cpp/build \
     && cmake .. \
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
-        -DLLAMA_BUILD_SERVER=ON \
-        -DLLAMA_SERVER_VERBOSE=ON \
+        -DLLAMA_BUILD_SERVER=OFF \
         -DGGML_CUDA=OFF \
         -DLLAMA_CLBLAST=ON \
         -DLLAMA_METAL=OFF \
         -DBUILD_SHARED_LIBS=ON \
     && cmake --build . --config ${CMAKE_BUILD_TYPE} -j$(nproc)
 
-# Install to system path (headers are automatically installed by cmake --install)
+# Install to system paths
 RUN cd /tmp/llama.cpp/build \
     && cmake --install .
 
-# Create symbolic links for easy access
-RUN ln -sf /usr/local/bin/server /usr/local/bin/llama-server \
-    && ln -sf /usr/local/bin/main /usr/local/bin/llama-cli
+# Verify installation
+RUN ldconfig && \
+    find /usr/local -name "*llama*" -o -name "*ggml*" | head -10
 
-# Cleanup
+# Cleanup build files
 RUN rm -rf /tmp/llama.cpp
 
-# Create app directory
-WORKDIR /app
+# Create working directory
+WORKDIR /workspace
 
-# Test the installation
-RUN llama-server --help || echo "Server help displayed"
-
+# Default command
 CMD ["/bin/bash"]
