@@ -9,7 +9,7 @@ ARG CMAKE_BUILD_TYPE=Release
 ENV LLAMA_CPP_VERSION=${LLAMA_CPP_VERSION}
 ENV CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
 
-# Install system dependencies
+# Install system dependencies for OpenCL
 RUN apt-get update && apt-get install -y \
     ocl-icd-opencl-dev \
     clinfo \
@@ -22,14 +22,14 @@ RUN git clone https://github.com/ggerganov/llama.cpp.git \
     && cd llama.cpp \
     && git checkout ${LLAMA_CPP_VERSION}
 
-# Create build directory and build
+# Create build directory and build (CPU + OpenCL only - no CUDA in GitHub Actions)
 RUN mkdir -p /tmp/llama.cpp/build \
     && cd /tmp/llama.cpp/build \
     && cmake .. \
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
         -DLLAMA_BUILD_SERVER=ON \
         -DLLAMA_SERVER_VERBOSE=ON \
-        -DGGML_CUDA=ON \
+        -DGGML_CUDA=OFF \
         -DLLAMA_CLBLAST=ON \
         -DLLAMA_METAL=OFF \
         -DBUILD_SHARED_LIBS=ON \
