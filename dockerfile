@@ -29,7 +29,7 @@ RUN mkdir -p /tmp/llama.cpp/build \
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
         -DLLAMA_BUILD_SERVER=ON \
         -DLLAMA_SERVER_VERBOSE=ON \
-        -DLLAMA_CUBLAS=ON \
+        -DGGML_CUDA=ON \
         -DLLAMA_CLBLAST=ON \
         -DLLAMA_METAL=OFF \
         -DBUILD_SHARED_LIBS=ON \
