@@ -1,0 +1,9 @@
+# .dockerignore
+.git
+.github
+Dockerfile
+.dockerignore
+README.md
+*.log
+temp/
+build/
